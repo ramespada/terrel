@@ -8044,7 +8044,7 @@ c --- (DATETM provides RCPU = 0.0 on the PC)
 
 c --- Report current date
       rdate12=rdate2(1:10)//'  '
-      call FMT_DATE(iolst,'MM-DD-YYYY','DD-MMM-YYYY',rdate12)
+      call FMT_DATE(iolst,'MM-DD-YYYY  ','DD-MMM-YYYY  ',rdate12)
       write(iolst,1402)rtime2,rdate12,NINT(delt),NINT(rcpu)
 1402  format(//2x,'End of run -- Clock time: ',a8/
      1         2x,'                    Date: ',a12//
@@ -10447,6 +10447,7 @@ c --- Include file of parameters and commons
       include 'control.trl'
       include 'filnam.trl'
 
+      character(len=256)::msg
       l7_5min = .FALSE.
       l3sec = .FALSE.
       l3cd = .FALSE.
@@ -10464,10 +10465,14 @@ c --- Include file of parameters and commons
       feasti=0.
       fnorti=0.
 
-      open(ioinp,file=datafil(k),status='OLD',access=caccess,
-     &     recl=irecl,form=cform,iostat=ierr)
-      if(ierr.NE.0) call OPEN_ERR(iolst,'SETGEOTIFF','Data File',
+      open(ioinp,file=trim(datafil(k)),status='OLD',access=caccess,
+     &     recl=irecl,form=cform,iostat=ierr,iomsg=msg)
+
+      if(ierr.NE.0) then
+         print*,"IOstat=",ierr,"IoMSG=",msg
+         call OPEN_ERR(iolst,'SETGEOTIFF','Data File',
      &                            datafil(k),ioinp)
+      end if
 
       return
       end
